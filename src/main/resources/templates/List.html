@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+<h1 th:fragment="content">
+    <h1>this is list page</h1>
+    <a th:href="@{/all?page=AddProduct}">Add Product</a>
+
+</h1>
+<h1 >List of all product</h1>
+
+</body>
+</html>
