@@ -1,44 +1,65 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Product")
+@Table(name =  "Product")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String name;
+    @Column(precision = 10, scale = 0)
+    private BigDecimal Price;
+    @ManyToOne
+    @JoinColumn(name = "SubCategory_Id", nullable = false) // Foreign Key Column
+    private subCategories subCategories;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Category> categories; // One product can have multiple categories
+    @ManyToOne
+    @JoinColumn(name = "Category_id", nullable = false)
+    private Categories Categories;
 
-    public List<SubCategory> getSubcategories() {
-        return subcategories;
+    public int getId() {
+        return id;
     }
 
-    public void setSubcategories(List<SubCategory> subcategories) {
-        this.subcategories = subcategories;
+    public BigDecimal getPrice() {
+        return Price;
     }
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubCategory> subcategories; // One product can have multiple categories
+    public subCategories getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(subCategories subCategories) {
+        this.subCategories = subCategories;
+    }
+
+    public void setPrice(BigDecimal price) {
+        Price = price;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public subCategories getSubCategory() {
+        return subCategories;
+    }
+
+    public void setSubCategory(subCategories subCategory) {
+        subCategories = subCategory;
     }
 
     public void setName(String name) {
@@ -49,11 +70,13 @@ public class Product {
         this.id = id;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public Categories getCategories() {
+        return Categories;
     }
 
-    public int getId() {
-        return id;
+    public void setCategories(Categories categories) {
+        Categories = categories;
     }
+//    public void setName(String trim) {
+//    }
 }

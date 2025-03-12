@@ -2,17 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Product List</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-<body>
-<h1 th:fragment="content">
-    <h1>this is list page</h1>
-    <a th:href="@{/all?page=AddProduct}">Add Product</a>
+<body class="bg-gray-100 text-gray-800">
 
-</h1>
-<h1 >List of all product</h1>
+<!-- Page Container -->
+<div th:fragment="content" class="container mx-auto p-6">
+
+    <!-- Header Section -->
+    <div class="flex justify-between items-center bg-blue-500 text-white p-4 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold">Product List</h1>
+        <a th:href="@{/all?page=AddProduct}" class="bg-white text-blue-500 px-4 py-2 rounded-lg shadow-md hover:bg-blue-100 transition">
+            + Add Product
+        </a>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Product Card -->
+        <div th:each="product : ${products}" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-xl font-semibold text-gray-900"> <span th:text="${product.name}"></span></h2>
+            <input type="number" name="id" class="hidden"  th:value="${product.id}">
+            <p class="text-gray-600 mt-2"><strong>Price:</strong> <span th:text="${product.price}"></span></p>
+            <p class="text-gray-600 mt-2"><strong>Category:</strong> <span th:text="${product.Categories.name}"></span></p>
+            <p class="text-gray-600"><strong>SubCategory:</strong> <span th:text="${product.subCategories.name}"></span></p>
+            <a th:href="@{/share(id=${product.id})}" class="text-blue-500 underline hover:text-blue-700">Share</a>
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

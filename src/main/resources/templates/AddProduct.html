@@ -11,71 +11,76 @@
 
     <form action="" method="post" id="dynamicForm">
 
-
-
         <label for="type">Select type</label>
         <select id="type" name="type" onchange="updateForm()">
-            <option value="product" selected>Product</option>
-            <option value="category">Category</option>
+            <option value="category" selected>Category</option>
             <option value="subcategory">Subcategory</option>
+            <option value="product">product</option>
         </select>
         <br>
 
-
-
-
         <!-- Product Section -->
-        <div id="productContainer">
-            <label for="product">Add Product</label>
-            <input type="text" class="bg-blue-200" name="product[]" id="product">
-            <button type="button" id="addProduct" onclick="addMoreProduct()">Add More</button>
+        <div id="categoryContainer">
+            <label for="category">Add category</label>
+            <input type="text" class="bg-blue-200" name="category[]" id="category">
+            <button type="button" id="addCategory" onclick="addMoreCategory()">Add More</button>
         </div>
 
 
 
         <!-- Category Section (Initially Hidden) -->
-        <div id="categoryContainer" style="display: none;">
-            <label for="productSelect">Select Product:</label>
-            <select id="productSelect" name="productId">
-                <option th:each="product : ${products}"
-                        th:value="${product.id}"
-                        th:text="${product.name}">
-                </option>
-            </select>
-            <br>
-            <div id="categoryFields">
-                <label>Add Category:</label>
-                <input type="text" name="categoryName[]" class="category-input" placeholder="Enter category">
-            </div>
-            <button type="button" id="addCategory" onclick="addMoreCategory()">Add More Categories</button>
-        </div>
-
         <div id="subcategoryContainer" style="display: none;">
-            <label for="subcategoryProduct">Select Product:</label>
-            <select id="subcategoryProduct" name="productId" onchange="filterCategories()">
-                <option value="">-- Select Product --</option>
-                <option th:each="product : ${products}"
-                        th:value="${product.id}"
-                        th:text="${product.name}">
-                </option>
-            </select>
-            <br>
-
-            <label for="subcategoryCategory">Select Category:</label>
-            <select id="subcategoryCategory" name="categoryId">
-                <option value="">-- Select Category --</option>
+            <label for="categorySelect">Select category:</label>
+            <select id="categorySelect" name="categoryId">
                 <option th:each="category : ${categories}"
                         th:value="${category.id}"
-                        th:text="${category.name}"
-                        th:attr="data-product-id=${category.product.id}">
+                        th:text="${category.name}">
+                </option>
+            </select>
+            <br>
+            <div id="subcategoryFields">
+                <label>Add SubCategory:</label>
+                <input type="text" name="subcategoryName[]" class="subcategory-input" placeholder="Enter subcategory">
+            </div>
+            <button type="button" id="addsubCategory" onclick="addMoresubCategory()">Add More subCategories</button>
+        </div>
+
+        <div id="productContainer" style="display: none;">
+            <label for="categoryId">Select category:</label>
+            <select id="categoryId" name="categoriesId" onchange="filterCategories()">
+                <option value="">-- Select category --</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}">
+                </option>
+            </select>
+            <br>
+
+            <label for="productCategory">Select subcategory:</label>
+            <select id="productCategory" name="subcategoryId">
+                <option value="">-- Select subCategory --</option>
+                <option th:each="subCategory : ${subCategories}"
+                        th:value="${subCategory.id}"
+                        th:text="${subCategory.name}"
+                        th:attr="data-category-id=${subCategory.Categories.id}"
+
+                >
                 </option>
             </select>
 
-            <div id="subCategoryFields">
-                <label>Add Subcategory:</label>
-                <input type="text" name="subCategoryName[]" class="subcategory-input" placeholder="Enter subcategory">
+            <div id="productFields">
+                <label>Add product:</label>
+                <input type="text" name="productName[]" class="product-input" placeholder="Enter product">
+
+                <label>Price:</label>
+                <input type="number" id="priceContainer" name="productPrice[]" class="product-price" step="0.01" placeholder="Enter price">
             </div>
-            <button type="button" id="addSubCategory" onclick="addMoreSubCategory()">Add More Subcategories</button>
+            <!-- 🔹 New Price Input Field (Initially Hidden) -->
+<!--            <div id="priceContainer" style="display: none;">-->
+<!--                <label for="price">Enter Price:</label>-->
+<!--                <input type="number" id="price" name="price" step="0.01" placeholder="Enter price">-->
+<!--            </div>-->
+            <button type="button" id="addproduct" onclick="addMoreproduct()">Add More product</button>
         </div>
 
         <button type="submit" id="submitButton">Submit</button>
@@ -84,88 +89,107 @@
     <script>
         function s(){
 
-            let p = document.getElementById("subcategoryProduct").value;
+            let p = document.getElementById("productProduct").value;
             console.log(p);
         }
         function updateForm() {
             let type = document.getElementById("type").value;
-            let productContainer = document.getElementById("productContainer");
             let categoryContainer = document.getElementById("categoryContainer");
+            let subcategoryContainer = document.getElementById("subcategoryContainer");
             let form = document.getElementById("dynamicForm");
+             let priceContainer = document.getElementById("priceContainer");
 
-            if (type === 'category') {
+            if (type === 'subcategory') {
+                categoryContainer.style.display = "none";
+                subcategoryContainer.style.display = "block";
                 productContainer.style.display = "none";
-                categoryContainer.style.display = "block";
-                subcategoryContainer.style.display = "none";
+                 priceContainer.style.display = "none";
 
-                form.action = "/save-category";
-            } else if (type === 'subcategory') {
-            productContainer.style.display = "none";
-            categoryContainer.style.display = "none";
-            subcategoryContainer.style.display = "block";
-            form.action = "/save-subcategory";
-        } else {
-            productContainer.style.display = "block";
+                form.action = "/save-subcategory";
+            } else if (type === 'product') {
             categoryContainer.style.display = "none";
             subcategoryContainer.style.display = "none";
+            productContainer.style.display = "block";
+             priceContainer.style.display = "block";
             form.action = "/save-product";
-        }
-        }
 
-        function addMoreProduct() {
-            let container = document.getElementById("productContainer");
-            let newInput = document.createElement("input");
-            newInput.type = "text";
-            newInput.name = "product[]";
-            newInput.className = "bg-blue-200";
-            newInput.placeholder = "Enter another product";
-
-            container.appendChild(document.createElement("br"));
-            container.appendChild(newInput);
+        } else {
+            categoryContainer.style.display = "block";
+            subcategoryContainer.style.display = "none";
+            productContainer.style.display = "none";
+             priceContainer.style.display = "none";
+            form.action = "/save-category";
+        }
         }
 
         function addMoreCategory() {
-            let container = document.getElementById("categoryFields");
+            let container = document.getElementById("categoryContainer");
             let newInput = document.createElement("input");
             newInput.type = "text";
-            newInput.name = "categoryName[]";
-            newInput.className = "category-input";
+            newInput.name = "category[]";
+            newInput.className = "bg-blue-200";
             newInput.placeholder = "Enter another category";
 
             container.appendChild(document.createElement("br"));
             container.appendChild(newInput);
         }
-        function addMoreSubCategory() {
-        let container = document.getElementById("subCategoryFields");
+
+        function addMoresubCategory() {
+            let container = document.getElementById("subcategoryFields");
+            let newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.name = "subcategoryName[]";
+            newInput.className = "subcategory-input";
+            newInput.placeholder = "Enter another subcategory";
+
+            container.appendChild(document.createElement("br"));
+            container.appendChild(newInput);
+        }
+        function addMoreproduct() {
+        let container = document.getElementById("productFields");
         let newInput = document.createElement("input");
         newInput.type = "text";
-        newInput.name = "subCategoryName[]";
-        newInput.placeholder = "Enter another subcategory";
+        newInput.name = "productName[]";
+        newInput.placeholder = "Enter another product";
+
+         let newPriceInput = document.createElement("input");
+    newPriceInput.type = "number";
+    newPriceInput.name = "productPrice[]";
+    newPriceInput.placeholder = "Enter price";
+    newPriceInput.className = "product-price";
+    newPriceInput.step = "0.01";
+
+
         container.appendChild(document.createElement("br"));
         container.appendChild(newInput);
+         container.appendChild(newPriceInput);
     }
-      function filterCategories() {
-        let selectedProductId = document.getElementById("subcategoryProduct").value;
-        let categoryOptions = document.querySelectorAll("#subcategoryCategory option");
+  function filterCategories() {
+    let selectedProductId = document.getElementById("categoryId").value;
+    let categoryOptions = document.querySelectorAll("#productCategory option");
 
-        categoryOptions.forEach(option => {
-            let categoryProductId = option.getAttribute("data-product-id");
+    console.log("Selected Product ID:", selectedProductId);
 
-            if (!categoryProductId || categoryProductId === selectedProductId) {
-                option.style.display = "block"; // ✅ Show categories belonging to the selected product
-            } else {
-                option.style.display = "none"; // ❌ Hide categories that don't match the product
-            }
-        });
+    categoryOptions.forEach(option => {
+        let categoryProductId = option.getAttribute("data-category-id");
+        console.log("Option Value:", option.value, "Category Product ID:", categoryProductId);
 
-        // ✅ Auto-select the first visible category if available
-        let firstVisible = document.querySelector("#subcategoryCategory option[style='display: block;']");
-        if (firstVisible) {
-            document.getElementById("subcategoryCategory").value = firstVisible.value;
+        if (!categoryProductId || categoryProductId === selectedProductId) {
+            option.style.display = "block";
         } else {
-            document.getElementById("subcategoryCategory").value = ""; // Reset selection if no match
+            option.style.display = "none";
         }
+    });
+
+    let firstVisible = document.querySelector("#productCategory option[style='display: block;']");
+    console.log("First visible option:", firstVisible ? firstVisible.value : "None");
+
+    if (firstVisible) {
+        document.getElementById("productCategory").value = firstVisible.value;
+    } else {
+        document.getElementById("productCategory").value = ""; // Reset selection if no match
     }
+}
 
     document.addEventListener("DOMContentLoaded", filterCategories);
         document.addEventListener("DOMContentLoaded", updateForm);
